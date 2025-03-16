@@ -1,19 +1,16 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:social_media/pages/home_page.dart';
-import 'package:social_media/pages/sign_in_page.dart';
+import 'package:social_media/pages/sign_up_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController nameController = TextEditingController();
+class _SignInPageState extends State<SignInPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -38,24 +35,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   spacing: 12,
                   children: [
                     Text(
-                      "Create your account",
+                      "Login your account",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 8),
-
-                    TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        labelText: "Name",
-                        hintText: "Enter you name",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
 
                     TextField(
                       controller: emailController,
@@ -96,11 +82,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(
                       width: double.maxFinite,
                       child: FilledButton(
-                        onPressed: _onSignUp,
+                        onPressed: _onSignIn,
                         child:
                             isLoading
                                 ? CircularProgressIndicator(color: Colors.white)
-                                : Text("Sign up"),
+                                : Text("Sign in"),
                       ),
                     ),
 
@@ -108,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "Already have an account? ",
+                            text: "Don't have an account? ",
                             style: TextStyle(color: Colors.black45),
                           ),
                           WidgetSpan(
@@ -116,12 +102,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               onTap: () {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => SignInPage(),
+                                    builder: (context) => SignUpPage(),
                                   ),
                                 );
                               },
                               child: Text(
-                                "sign in",
+                                "sign up",
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),
@@ -139,8 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Future<void> _onSignUp() async {
-    final name = nameController.text;
+  Future<void> _onSignIn() async {
     final email = emailController.text;
     final password = passwordController.text;
 
@@ -151,24 +136,16 @@ class _SignUpPageState extends State<SignUpPage> {
         isLoading = true;
       });
 
-      final userCredentials = await client.auth.signUp(
-        password: password,
-        email: email,
-      );
+      await client.auth.signInWithPassword(password: password, email: email);
 
-      await client.from("users").insert({
-        "id": userCredentials.user!.id,
-        "name": name,
-        "email": email,
-      });
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => SignInPage()),
-        );
+        Navigator.of(
+          context,
+        ).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please sign in with your credentials")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("User sign in successful")));
       }
     } on AuthException catch (e) {
       ScaffoldMessenger.of(
