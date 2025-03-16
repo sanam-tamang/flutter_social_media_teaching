@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:social_media/pages/home_page.dart';
 import 'package:social_media/pages/sign_in_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

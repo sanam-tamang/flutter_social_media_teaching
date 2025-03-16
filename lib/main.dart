@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:social_media/pages/sign_up_page.dart';
+import 'package:social_media/pages/home_page.dart';
+import 'package:social_media/pages/sign_in_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -22,7 +23,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Social Media",
-      home: SignUpPage(),
+      home:
+          Supabase.instance.client.auth.currentUser != null
+              ? HomePage()
+              : SignInPage(),
     );
   }
 }
